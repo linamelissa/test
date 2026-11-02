@@ -1,0 +1,284 @@
+:root {
+  --ink: #1F4D2E;        /* Dunkelgrün aus der Zeichnung */
+  --ink-soft: rgba(31, 77, 46, .08);
+  --paper: #F4F1EA;      /* exakt der Hintergrund der Illustration */
+  --text: #111111;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+/* ---------- Navigation ---------- */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 32px;
+}
+
+.nav__logo {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav__links { display: flex; align-items: center; gap: 28px; list-style: none; }
+.nav__links a { color: var(--text); text-decoration: none; font-size: .95rem; }
+.nav__links a:hover { color: var(--ink); text-decoration: underline; }
+
+/* Kontakt als auffälliger Button */
+.nav__links a.nav__cta {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 999px;
+}
+.nav__links a.nav__cta:hover { background: var(--text); color: var(--paper); text-decoration: none; }
+
+/* ---------- Header ---------- */
+.hero {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+.hero__intro {
+  text-align: center;
+  margin: 8px 0 16px;
+}
+.hero__intro h1 {
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero__intro p {
+  color: var(--ink);
+  margin-top: 6px;
+}
+
+/* Bild + klickbare Bereiche liegen in einem gemeinsamen Rahmen */
+.scene {
+  position: relative;
+}
+
+.scene__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Klickbare Bereiche ---------- */
+.hotspot {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+/* Beschriftung beim Hovern */
+.hotspot::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translate(-50%, 4px);
+  white-space: nowrap;
+  background: var(--ink);
+  color: var(--paper);
+  font: 600 .85rem/1 system-ui, sans-serif;
+  padding: 8px 12px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 2;
+}
+
+.hotspot:hover,
+.hotspot:focus-visible {
+  background: var(--ink-soft);
+  border-color: var(--ink);
+  border-style: dashed;
+  outline: none;
+  z-index: 3;
+}
+
+.hotspot:hover::after,
+.hotspot:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Wichtig für Recruiter: Objekt ist dauerhaft wie mit einem grünen Textmarker markiert */
+.hotspot--key::before {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background: #CFE6C6;               /* helles Marker-Grün */
+  mix-blend-mode: multiply;          /* färbt nur den hellen Hintergrund, die Linien bleiben dunkel */
+  border-radius: 42% 58% 52% 48% / 55% 45% 55% 45%;  /* unregelmäßig, wie von Hand markiert */
+  pointer-events: none;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.hotspot--key:hover,
+.hotspot--key:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  z-index: auto;   /* wichtig: sonst funktioniert der Marker-Effekt beim Hovern nicht */
+}
+
+.hotspot--key:hover::before,
+.hotspot--key:focus-visible::before {
+  background: #B3D6A8;               /* beim Hovern etwas kräftiger */
+  transform: scale(1.04);
+}
+
+.hotspot--key:focus-visible { outline: 2px dashed var(--ink); outline-offset: 4px; }
+
+/* ---------- Fenster (Dialog) ---------- */
+.panel {
+  /* Position wird per JavaScript direkt neben dem angeklickten Gegenstand gesetzt */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(calc(100vw - 32px), 420px);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 28px;
+  background: var(--paper);
+  color: var(--text);
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(17, 17, 17, .15);
+}
+
+.panel--wide { width: min(calc(100vw - 32px), 640px); }
+
+/* Hintergrund nur ganz leicht abdunkeln, kein Blur */
+.panel::backdrop { background: rgba(17, 17, 17, .08); }
+
+.panel[open] { animation: pop .22s ease-out; }
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(.94); }
+  to   { opacity: 1; transform: none; }
+}
+
+.panel h2 { color: var(--text); margin-bottom: 12px; padding-right: 32px; }
+.panel p  { margin-bottom: 12px; }
+
+.panel__close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.panel__close:hover,
+.panel__close:focus-visible { background: var(--ink-soft); outline: 2px solid var(--ink); }
+
+.panel__embed {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+}
+
+.links { display: flex; flex-wrap: wrap; gap: 12px; }
+.links a,
+.card {
+  color: var(--ink);
+}
+.links a {
+  font-weight: 600;
+  padding: 10px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  text-decoration: none;
+}
+.links a:hover { background: var(--ink); color: var(--paper); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
+.chips li {
+  padding: 6px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-size: .9rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: block;
+  padding: 20px;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  text-decoration: none;
+  transition: transform .2s ease, background .2s ease;
+}
+.card:hover { background: var(--ink-soft); transform: translateY(-3px); }
+.card h3 { color: var(--text); margin: 6px 0; }
+.card p  { color: var(--text); margin: 0; font-size: .95rem; }
+.card__tag { font-size: .8rem; font-weight: 600; }
+
+/* ---------- Handy ---------- */
+@media (max-width: 600px) {
+  .nav { padding: 16px; }
+  .nav__links { gap: 16px; }
+  .nav__links a { font-size: .85rem; }
+  .hotspot::after { display: none; } /* auf dem Handy gibt es kein Hovern */
+  .nav { flex-wrap: wrap; gap: 8px; }
+  .nav__links a.nav__cta { padding: 6px 12px; }
+  .panel { padding: 24px; left: 8px !important; right: 8px; top: auto !important; bottom: 8px; width: auto; max-width: none; max-height: 75vh; }
+}
+
+/* Kleine Liste mit Fakten (Kontakt) */
+.facts { list-style: none; margin-bottom: 16px; }
+.facts li { margin-bottom: 4px; }
+.facts strong { color: var(--ink); }
+
+/* Prozess-Schritte */
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  counter-reset: step;
+  margin-bottom: 12px;
+}
+.steps li {
+  counter-increment: step;
+  font-size: .9rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: var(--ink-soft);
+  border-radius: 999px;
+}
+.steps li::before { content: counter(step) ". "; color: var(--ink); }
