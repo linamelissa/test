@@ -112,7 +112,6 @@ body {
 
 .hotspot:hover,
 .hotspot:focus-visible {
-  background: var(--ink-soft);
   border-color: var(--ink);
   border-style: dashed;
   outline: none;
@@ -282,3 +281,167 @@ body {
   border-radius: 999px;
 }
 .steps li::before { content: counter(step) ". "; color: var(--ink); }
+
+/* =====================================================
+   ANIMATIONEN
+   ===================================================== */
+
+/* ---------- 1. Aufbau beim Laden: Zeichnung erscheint von links nach rechts ---------- */
+.scene.intro .scene__img {
+  -webkit-mask-image: linear-gradient(90deg, #000 0 40%, transparent 60%);
+          mask-image: linear-gradient(90deg, #000 0 40%, transparent 60%);
+  -webkit-mask-size: 250% 100%;
+          mask-size: 250% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  animation: aufbau 2.8s cubic-bezier(.55, .1, .35, 1) forwards;
+}
+
+@keyframes aufbau {
+  from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  to   { -webkit-mask-position: 0 0;    mask-position: 0 0; }
+}
+
+/* Details und klickbare Bereiche kommen erst, wenn die Zeichnung steht */
+.scene.intro .fx,
+.scene.intro .hotspot--key::before {
+  opacity: 0;
+  animation: einblenden .6s ease 2.5s forwards;
+}
+
+@keyframes einblenden { to { opacity: 1; } }
+
+
+/* ---------- 2. Gegenstand bewegt sich beim Hovern ---------- */
+
+/* Ausschnitt des Bildes, der genau über dem Gegenstand liegt (wird per JS gesetzt) */
+.hotspot__obj {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background-repeat: no-repeat;
+  opacity: 0;                    /* nur sichtbar, solange er sich bewegt */
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 72%, transparent 100%);
+          mask-image: radial-gradient(ellipse at center, #000 72%, transparent 100%);
+}
+
+.hotspot:hover .hotspot__obj,
+.hotspot:focus-visible .hotspot__obj { opacity: 1; }
+
+/* Marker-Grün liegt über dem bewegten Ausschnitt */
+.hotspot--key::before { z-index: 1; }
+
+/* Große Gegenstände: Rand nicht ausblenden */
+[data-anim="pop"] .hotspot__obj { -webkit-mask-image: none; mask-image: none; }
+
+[data-anim="pop"]:hover .hotspot__obj,
+[data-anim="pop"]:focus-visible .hotspot__obj       { animation: pop .5s ease-out forwards; }
+[data-anim="wippen"]:hover .hotspot__obj,
+[data-anim="wippen"]:focus-visible .hotspot__obj    { animation: wippen 1.2s ease-in-out infinite; }
+[data-anim="kippeln"]:hover .hotspot__obj,
+[data-anim="kippeln"]:focus-visible .hotspot__obj   { animation: kippeln .9s ease-out; }
+[data-anim="heben"]:hover .hotspot__obj,
+[data-anim="heben"]:focus-visible .hotspot__obj     { animation: heben .9s ease-in-out; }
+[data-anim="wackeln"]:hover .hotspot__obj,
+[data-anim="wackeln"]:focus-visible .hotspot__obj   { animation: wackeln .7s ease-in-out; transform-origin: 50% 50%; }
+[data-anim="drehen"]:hover .hotspot__obj,
+[data-anim="drehen"]:focus-visible .hotspot__obj    { animation: drehen 1.2s ease-in-out; transform-origin: 50% 45%; }
+[data-anim="schwingen"]:hover .hotspot__obj,
+[data-anim="schwingen"]:focus-visible .hotspot__obj { animation: schwingen 1.4s ease-in-out; transform-origin: 50% 0; }
+
+@keyframes pop      { 50% { transform: translateY(-5px) scale(1.02); } 100% { transform: translateY(-3px) scale(1.015); } }
+@keyframes wippen   { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes kippeln  { 25% { transform: rotate(-6deg); } 55% { transform: rotate(4deg); } 80% { transform: rotate(-2deg); } }
+@keyframes heben    { 30% { transform: translateY(-10px); } 55% { transform: translateY(0); } 75% { transform: translateY(-5px); } }
+@keyframes wackeln  { 20% { transform: rotate(-3deg); } 40% { transform: rotate(3deg); } 60% { transform: rotate(-2deg); } 80% { transform: rotate(1deg); } }
+@keyframes drehen   { 30% { transform: rotate(-10deg); } 65% { transform: rotate(6deg); } }
+@keyframes schwingen{ 20% { transform: rotate(6deg); } 45% { transform: rotate(-4deg); } 70% { transform: rotate(2deg); } }
+
+
+/* ---------- 3. Kleine Dauer-Details ---------- */
+.fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Sterne funkeln */
+.fx-star {
+  fill: var(--ink);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  animation: funkeln 3.4s ease-in-out infinite var(--d, 0s);
+}
+@keyframes funkeln {
+  0%, 60%, 100% { transform: scale(0) rotate(0); opacity: 0; }
+  75%           { transform: scale(1) rotate(45deg); opacity: 1; }
+}
+
+/* Kaffee dampft */
+.fx-steam {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: dampf 3.2s ease-out infinite var(--d, 0s);
+}
+@keyframes dampf {
+  0%   { transform: translateY(10px); opacity: 0; }
+  30%  { opacity: .75; }
+  100% { transform: translateY(-34px); opacity: 0; }
+}
+
+/* Blatt fällt */
+.fx-leaf path { fill: var(--ink); }
+.fx-leaf {
+  opacity: 0;
+  animation: blatt 10s ease-in-out infinite 3s;
+}
+@keyframes blatt {
+  0%   { transform: translate(1000px, 235px) rotate(0);     opacity: 0; }
+  5%   { opacity: 1; }
+  15%  { transform: translate(1030px, 285px) rotate(35deg); }
+  25%  { transform: translate(1005px, 335px) rotate(-10deg); }
+  35%  { transform: translate(1040px, 385px) rotate(40deg); opacity: 1; }
+  40%  { transform: translate(1035px, 405px) rotate(30deg); opacity: 0; }
+  100% { transform: translate(1035px, 405px) rotate(30deg); opacity: 0; }
+}
+
+/* Cursor blinkt */
+.fx-caret {
+  fill: var(--paper);
+  animation: blinken 1.1s steps(1) infinite;
+}
+@keyframes blinken { 50% { opacity: 0; } }
+
+/* Mauszeiger wandert über die Wireframes */
+.fx-mouse path {
+  fill: var(--ink);
+  stroke: var(--paper);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.fx-mouse { animation: maus 9s ease-in-out infinite; }
+@keyframes maus {
+  0%, 12%   { transform: translate(1340px, 450px); }
+  30%, 42%  { transform: translate(1470px, 420px); }
+  60%, 72%  { transform: translate(1615px, 465px); }
+  90%, 100% { transform: translate(1340px, 450px); }
+}
+
+
+/* ---------- Barrierefreiheit: keine Bewegung, wenn im System so eingestellt ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .scene.intro .scene__img { animation: none; -webkit-mask-image: none; mask-image: none; }
+  .scene.intro .fx, .scene.intro .hotspot--key::before { animation: none; opacity: 1; }
+  .hotspot__obj { display: none; }
+  .fx-star, .fx-steam, .fx-leaf, .fx-mouse { display: none; }
+  .fx-caret { animation: none; }
+}
