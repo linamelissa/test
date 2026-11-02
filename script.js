@@ -1,108 +1,149 @@
-// Abstand zwischen Gegenstand und Fenster bzw. zum Bildschirmrand (in px)
-const ABSTAND = 12;
-const RAND = 16;
-
-let offenesFenster = null;
-let ausloeser = null;
-
-// Setzt das Fenster direkt neben den angeklickten Gegenstand
-function positioniere(dialog, trigger) {
-  if (window.matchMedia('(max-width: 600px)').matches) return; // Handy: Fenster unten (CSS)
-
-  const ziel = trigger.getBoundingClientRect();
-  const breite = dialog.offsetWidth;
-  const hoehe = dialog.offsetHeight;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  let left;
-  let origin;
-
-  if (ziel.right + ABSTAND + breite <= vw - RAND) {
-    // Platz rechts vom Gegenstand
-    left = ziel.right + ABSTAND;
-    origin = 'left center';
-  } else if (ziel.left - ABSTAND - breite >= RAND) {
-    // sonst links davon
-    left = ziel.left - ABSTAND - breite;
-    origin = 'right center';
-  } else {
-    // sonst mittig darunter
-    left = ziel.left + ziel.width / 2 - breite / 2;
-    origin = 'top center';
-  }
-
-  let top = (origin === 'top center')
-    ? ziel.bottom + ABSTAND
-    : ziel.top + ziel.height / 2 - hoehe / 2;
-
-  // Nie über den Bildschirmrand hinaus
-  left = Math.min(Math.max(left, RAND), vw - breite - RAND);
-  top = Math.min(Math.max(top, RAND), vh - hoehe - RAND);
-
-  dialog.style.left = left + 'px';
-  dialog.style.top = top + 'px';
-  dialog.style.transformOrigin = origin;
-}
-
-document.querySelectorAll('[data-open]').forEach(function (trigger) {
-  // Hover-Text auch für Screenreader
-  if (trigger.dataset.label && !trigger.getAttribute('aria-label')) {
-    trigger.setAttribute('aria-label', trigger.dataset.label);
-  }
-
-  trigger.addEventListener('click', function (event) {
-    event.preventDefault();
-    const dialog = document.getElementById(trigger.dataset.open);
-    if (!dialog) return;
-    if (offenesFenster && offenesFenster !== dialog) offenesFenster.close();
-
-    dialog.showModal();
-    positioniere(dialog, trigger);
-    offenesFenster = dialog;
-    ausloeser = trigger;
-  });
-});
-
-document.querySelectorAll('dialog.panel').forEach(function (dialog) {
-  dialog.querySelector('.panel__close').addEventListener('click', function () {
-    dialog.close();
-  });
-
-  // Klick neben das Fenster schließt es
-  dialog.addEventListener('click', function (event) {
-    if (event.target !== dialog) return;
-    const r = dialog.getBoundingClientRect();
-    const draussen = event.clientX < r.left || event.clientX > r.right ||
-                     event.clientY < r.top  || event.clientY > r.bottom;
-    if (draussen) dialog.close();
-  });
-
-  dialog.addEventListener('close', function () {
-    if (offenesFenster === dialog) offenesFenster = null;
-  });
-});
-
-// Beim Ändern der Fenstergröße oder Scrollen bleibt das Fenster am Gegenstand
-['resize', 'scroll'].forEach(function (ereignis) {
-  window.addEventListener(ereignis, function () {
-    if (offenesFenster && ausloeser) positioniere(offenesFenster, ausloeser);
-  }, { passive: true });
-});
-// Escape schließt ein offenes Fenster automatisch (eingebaut in <dialog>)
-
-
-// ===== ANIMATIONEN =====
+/* =====================================================
+   EINSTELLUNGEN
+   ===================================================== */
 
 /* true  = Aufbau-Animation nur beim allerersten Besuch
    false = bei jedem Laden (praktisch, solange du noch baust) */
 const AUFBAU_NUR_BEIM_ERSTEN_BESUCH = false;
 
-(function () {
-  const scene = document.querySelector('.scene');
-  const img = scene.querySelector('.scene__img');
+const MAX_ZOOM = 2.4;          // wie nah die Kamera höchstens heranfährt
+const HANDY_BREITE = 800;      // ab hier: Karte unten statt daneben
 
-  // Aufbau beim Laden
+
+/* =====================================================
+   SCROLL-TOUR
+   ===================================================== */
+const nav = document.querySelector('.nav');
+const scene = document.querySelector('.scene');
+const img = scene.querySelector('.scene__img');
+const steps = Array.from(document.querySelectorAll('.step'));
+const BILD_VERHAELTNIS = 1100 / 2576;
+
+let aktiverStep = steps[0];
+
+function istHandy() {
+  return window.innerWidth <= HANDY_BREITE;
+}
+
+function fokusLesen(step) {
+  const [x, y, w, h] = step.dataset.focus.split(',').map(Number);
+  return { x, y, w, h };
+}
+
+// Karte auf die Seite legen, auf der der Gegenstand NICHT ist
+function seitenSetzen() {
+  steps.forEach(function (step) {
+    if (step.classList.contains('step--start')) return;
+    const f = fokusLesen(step);
+    const mitte = f.x + f.w / 2;
+    step.classList.toggle('step--left', mitte >= 50);
+  });
+}
+
+// Berechnet, wohin die "Kamera" fahren muss
+function kameraAuf(step) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const oben = nav.offsetHeight;
+  const W = vw;                          // Grundbreite der Zeichnung
+  const H = W * BILD_VERHAELTNIS;
+  const f = fokusLesen(step);
+
+  let s, zielX, zielY, mx, my;
+  let fx0 = 0, fw = vw, fy0 = oben, fh = vh - oben;   // freier Bereich für die Zeichnung
+
+  // Übersicht: ganze Zeichnung, Platz oben für die Begrüßung
+  const platzText = istHandy() ? 150 : 140;
+  const sGanz = Math.min((vw - 32) / W, (vh - oben - platzText - 24) / H);
+
+  if (step.classList.contains('step--start')) {
+    // auf dem Handy etwas näher ran, damit die Zeichnung nicht winzig ist
+    s = istHandy() ? sGanz * 1.7 : sGanz;
+    mx = W / 2;
+    my = H / 2;
+    zielX = vw / 2;
+    zielY = oben + platzText + (vh - oben - platzText) / 2;
+  } else {
+    // freier Bereich neben bzw. über der Karte
+
+    if (istHandy()) {
+      // Platz über der Karte (Karte sitzt unten)
+      const karteH = step.querySelector('.step__card').offsetHeight + 32;
+      fh = Math.max(vh - oben - karteH, (vh - oben) * 0.4);
+    } else {
+      const karte = step.querySelector('.step__card').offsetWidth + vw * 0.05 + 24;
+      if (step.classList.contains('step--left')) { fx0 = karte; }
+      fw = vw - karte;
+    }
+
+    const rw = f.w / 100 * W;
+    const rh = f.h / 100 * H;
+    s = Math.min(fw * 0.7 / rw, fh * 0.7 / rh, MAX_ZOOM);
+    s = Math.max(s, sGanz);
+    // Handy: Zeichnung füllt den Bereich über der Karte ganz aus
+    if (istHandy()) s = Math.max(s, fh * 1.15 / H);
+
+    mx = (f.x + f.w / 2) / 100 * W;
+    my = (f.y + f.h / 2) / 100 * H;
+    zielX = fx0 + fw / 2;
+    zielY = fy0 + fh / 2;
+  }
+
+  let tx = zielX - mx * s;
+  let ty = zielY - my * s;
+
+  // Nie über den Rand der Zeichnung hinausfahren (sonst sieht man, wo sie aufhört):
+  // erst den ganzen Bildschirm füllen, sonst wenigstens den freien Bereich
+  if (W * s >= vw)           tx = Math.min(0, Math.max(tx, vw - W * s));
+  else if (W * s >= fw)      tx = Math.min(fx0, Math.max(tx, fx0 + fw - W * s));
+  if (H * s >= vh - oben)    ty = Math.min(oben, Math.max(ty, vh - H * s));
+  else if (H * s >= fh)      ty = Math.min(fy0, Math.max(ty, fy0 + fh - H * s));
+
+  scene.style.width = W + 'px';
+  scene.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + s + ')';
+  scene.style.setProperty('--inv', (1 / s).toFixed(3));
+}
+
+function aktiviere(step) {
+  aktiverStep = step;
+  steps.forEach(function (s) { s.classList.toggle('is-active', s === step); });
+  kameraAuf(step);
+}
+
+// Welche Station ist gerade in der Bildschirmmitte?
+const beobachter = new IntersectionObserver(function (eintraege) {
+  eintraege.forEach(function (e) {
+    if (e.isIntersecting) aktiviere(e.target);
+  });
+}, { rootMargin: '-50% 0px -50% 0px' });
+
+steps.forEach(function (step) { beobachter.observe(step); });
+
+// Klick auf einen Gegenstand → zur passenden Station scrollen
+document.querySelectorAll('.hotspot').forEach(function (spot) {
+  spot.setAttribute('aria-label', spot.dataset.label);
+  spot.addEventListener('click', function () {
+    const ziel = document.getElementById(spot.dataset.go);
+    if (ziel) ziel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+seitenSetzen();
+aktiviere(steps[0]);
+
+let resizeTimer;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function () { kameraAuf(aktiverStep); }, 100);
+});
+
+
+/* =====================================================
+   ANIMATIONEN
+   ===================================================== */
+
+// Aufbau beim Laden
+(function () {
   let gesehen = false;
   try { gesehen = localStorage.getItem('aufbau-gesehen') === '1'; } catch (e) {}
   if (AUFBAU_NUR_BEIM_ERSTEN_BESUCH && gesehen) {
@@ -110,24 +151,24 @@ const AUFBAU_NUR_BEIM_ERSTEN_BESUCH = false;
   } else {
     try { localStorage.setItem('aufbau-gesehen', '1'); } catch (e) {}
   }
-
-  // Bildausschnitt für jeden Gegenstand setzen, damit er sich beim Hovern bewegen kann
-  function ausschnitteSetzen() {
-    const quelle = img.currentSrc || img.src;
-    scene.querySelectorAll('.hotspot').forEach(function (spot) {
-      const obj = spot.querySelector('.hotspot__obj');
-      if (!obj) return;
-      const st = spot.style;
-      const x = parseFloat(st.getPropertyValue('--x'));
-      const y = parseFloat(st.getPropertyValue('--y'));
-      const w = parseFloat(st.getPropertyValue('--w'));
-      const h = parseFloat(st.getPropertyValue('--h'));
-      obj.style.backgroundImage = 'url("' + quelle + '")';
-      obj.style.backgroundSize = (10000 / w) + '% ' + (10000 / h) + '%';
-      obj.style.backgroundPosition = (x / (100 - w) * 100) + '% ' + (y / (100 - h) * 100) + '%';
-    });
-  }
-
-  if (img.complete) ausschnitteSetzen();
-  img.addEventListener('load', ausschnitteSetzen);
 })();
+
+// Bildausschnitt für jeden Gegenstand setzen, damit er sich beim Hovern bewegen kann
+function ausschnitteSetzen() {
+  const quelle = img.currentSrc || img.src;
+  scene.querySelectorAll('.hotspot').forEach(function (spot) {
+    const obj = spot.querySelector('.hotspot__obj');
+    if (!obj) return;
+    const st = spot.style;
+    const x = parseFloat(st.getPropertyValue('--x'));
+    const y = parseFloat(st.getPropertyValue('--y'));
+    const w = parseFloat(st.getPropertyValue('--w'));
+    const h = parseFloat(st.getPropertyValue('--h'));
+    obj.style.backgroundImage = 'url("' + quelle + '")';
+    obj.style.backgroundSize = (10000 / w) + '% ' + (10000 / h) + '%';
+    obj.style.backgroundPosition = (x / (100 - w) * 100) + '% ' + (y / (100 - h) * 100) + '%';
+  });
+}
+
+if (img.complete) ausschnitteSetzen();
+img.addEventListener('load', ausschnitteSetzen);
