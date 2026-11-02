@@ -9,239 +9,231 @@
 </head>
 <body>
 
-  <!-- Navigation: die wichtigsten Dinge für Recruiter immer sichtbar -->
+  <!-- Navigation: springt zu den wichtigsten Stationen der Tour -->
   <nav class="nav">
-    <a href="#" class="nav__logo">Lina Melissa</a>
+    <a href="#start" class="nav__logo">Lina Melissa</a>
     <ul class="nav__links">
-      <li><a href="#" data-open="casestudies">Case Studies</a></li>
-      <li><a href="#" data-open="lebenslauf">Lebenslauf</a></li>
-      <li><a href="#" data-open="ueber-mich">Über mich</a></li>
-      <li><a href="#" data-open="kontakt" class="nav__cta">Kontakt</a></li>
+      <li><a href="#cases">Case Studies</a></li>
+      <li><a href="#lebenslauf">Lebenslauf</a></li>
+      <li><a href="#ueber-mich">Über mich</a></li>
+      <li><a href="#kontakt" class="nav__cta">Kontakt</a></li>
     </ul>
   </nav>
 
-  <header class="hero">
-    <div class="hero__intro">
-      <h1>Hi, ich bin Lina – UX/UI Designerin.</h1>
-      <p>Klick dich durch meinen Schreibtisch.</p>
+  <main class="tour">
+
+    <!-- ===== DIE ZEICHNUNG (bleibt stehen, die "Kamera" fährt beim Scrollen herum) ===== -->
+    <div class="stage">
+      <div class="scene intro">
+        <img
+          class="scene__img"
+          src="header-illustration.jpg"
+          width="2576" height="1100"
+          alt="Gezeichneter Design-Arbeitsplatz mit Laptop, Monitor, Tablet, Kopfhörern, Pflanze und Kaffeetasse">
+
+        <!-- KLEINE ANIMATIONEN (liegen über dem Bild, Koordinaten = Pixel im Originalbild 2576 × 1100) -->
+        <svg class="fx" viewBox="0 0 2576 1100" aria-hidden="true">
+          <!-- Sterne funkeln -->
+          <g transform="translate(1185 150)"><path class="fx-star" style="--d:0s"   d="M0 -18C2 -5 5 -2 18 0C5 2 2 5 0 18C-2 5 -5 2 -18 0C-5 -2 -2 -5 0 -18Z"/></g>
+          <g transform="translate(1065 262)"><path class="fx-star" style="--d:1.1s" d="M0 -13C1.5 -4 4 -1.5 13 0C4 1.5 1.5 4 0 13C-1.5 4 -4 1.5 -13 0C-4 -1.5 -1.5 -4 0 -13Z"/></g>
+          <g transform="translate(838 405)"> <path class="fx-star" style="--d:2.2s" d="M0 -15C2 -4 4 -2 15 0C4 2 2 4 0 15C-2 4 -4 2 -15 0C-4 -2 -2 -4 0 -15Z"/></g>
+          <g transform="translate(1985 190)"><path class="fx-star" style="--d:.6s"  d="M0 -16C2 -4 4 -2 16 0C4 2 2 4 0 16C-2 4 -4 2 -16 0C-4 -2 -2 -4 0 -16Z"/></g>
+          <g transform="translate(1992 470)"><path class="fx-star" style="--d:1.7s" d="M0 -12C1.5 -3 3 -1.5 12 0C3 1.5 1.5 3 0 12C-1.5 3 -3 1.5 -12 0C-3 -1.5 -1.5 -3 0 -12Z"/></g>
+
+          <!-- Kaffee dampft -->
+          <path class="fx-steam"                 d="M898 772q-14 -18 0 -36q14 -18 0 -36"/>
+          <path class="fx-steam" style="--d:1.3s" d="M934 776q14 -18 0 -36q-14 -18 0 -36"/>
+
+          <!-- Blatt fällt von der Pflanze -->
+          <g class="fx-leaf"><path d="M0 0C10 -16 30 -16 38 -6C30 8 10 12 0 0Z"/></g>
+
+          <!-- Blinkender Cursor im Code auf dem Laptop -->
+          <rect class="fx-caret" x="1048" y="512" width="14" height="28" rx="2"/>
+
+          <!-- Mauszeiger auf dem großen Bildschirm -->
+          <g class="fx-mouse"><path d="M0 0L0 36L9 28L17 44L23 41L15 25L28 25Z"/></g>
+        </svg>
+
+        <!--
+          KLICKBARE GEGENSTÄNDE
+          --x / --y / --w / --h = Position und Größe in % vom Bild
+          data-go    = id der Station, zu der beim Klick gescrollt wird
+          data-anim  = Bewegung beim Hovern
+          data-label = Text beim Hovern
+          hotspot--key = wichtig für Recruiter → grün markiert
+        -->
+        <button class="hotspot hotspot--key" style="--x:49.4%; --y:25.5%; --w:16.8%; --h:28.5%" data-go="cases"            data-anim="pop"       data-label="UX Case Studies"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot hotspot--key" style="--x:64%;   --y:55%;   --w:9.2%;  --h:11%"   data-go="lebenslauf"       data-anim="heben"     data-label="Lebenslauf"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot hotspot--key" style="--x:90.5%; --y:66%;   --w:6.3%;  --h:19%"   data-go="kontakt"          data-anim="schwingen" data-label="Kontakt"><span class="hotspot__obj" aria-hidden="true"></span></button>
+
+        <button class="hotspot" style="--x:44.2%; --y:72.5%; --w:11.5%; --h:10.5%" data-go="prozess"          data-anim="wackeln" data-label="Mein Design-Prozess"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:35.6%; --y:38%;   --w:13.8%; --h:34%"   data-go="mediengestaltung" data-anim="pop"     data-label="Meine Arbeiten als Mediengestalterin"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:52.8%; --y:55%;   --w:9.5%;  --h:17%"   data-go="kreativ"          data-anim="pop"     data-label="Ich zeichne auch digital"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:22.6%; --y:69%;   --w:4.4%;  --h:9.5%"  data-go="studium"          data-anim="wackeln" data-label="Ich studiere UX-Design"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:20.5%; --y:14%;   --w:5.3%;  --h:12%"   data-go="zertifikate"      data-anim="wackeln" data-label="Zertifikate & Zeugnisse"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:77.3%; --y:8%;    --w:17%;   --h:27%"   data-go="weg"              data-anim="pop"     data-label="Mein Weg ins UX"><span class="hotspot__obj" aria-hidden="true"></span></button>
+
+        <button class="hotspot" style="--x:32.3%; --y:73.5%; --w:6.6%;  --h:13%"   data-go="ueber-mich" data-anim="kippeln" data-label="Über mich"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:68.2%; --y:17%;   --w:7.7%;  --h:27%"   data-go="ueber-mich" data-anim="wackeln" data-label="Das bin ich"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:6%;    --y:45%;   --w:10.2%; --h:28%"   data-go="kreativ"    data-anim="kippeln" data-label="Ich male mit Acryl auf Leinwand"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:24%;   --y:46.5%; --w:8%;    --h:21%"   data-go="freizeit"   data-anim="wippen"  data-label="Ich designe am liebsten mit Musik"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:16.4%; --y:44%;   --w:5.9%;  --h:29%"   data-go="freizeit"   data-anim="wackeln" data-label="Ich zeige meine Projekte auf Social Media"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:10.2%; --y:11.5%; --w:4.7%;  --h:16%"   data-go="freizeit"   data-anim="drehen"  data-label="Ich reise gerne"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:15.8%; --y:13%;   --w:4.7%;  --h:14.5%" data-go="freizeit"   data-anim="heben"   data-label="Ich lese gerne"><span class="hotspot__obj" aria-hidden="true"></span></button>
+        <button class="hotspot" style="--x:27%;   --y:73%;   --w:5.2%;  --h:7.5%"  data-go="freizeit"   data-anim="heben"   data-label="Ich gehe ins Gym"><span class="hotspot__obj" aria-hidden="true"></span></button>
+      </div>
     </div>
 
-    <div class="scene intro">
-      <img
-        class="scene__img"
-        src="header-illustration.jpg"
-        srcset="header-illustration-1400.jpg 1400w,
-                header-illustration.jpg 2576w"
-        sizes="100vw"
-        width="2576" height="1100"
-        alt="Gezeichneter Design-Arbeitsplatz mit Laptop, Monitor, Tablet, Kopfhörern, Pflanze und Kaffeetasse">
 
-      <!-- KLEINE ANIMATIONEN (liegen über dem Bild, Koordinaten = Pixel im Originalbild 2576 × 1100) -->
-      <svg class="fx" viewBox="0 0 2576 1100" aria-hidden="true">
-        <!-- Sterne funkeln -->
-        <g transform="translate(1185 150)"><path class="fx-star" style="--d:0s"   d="M0 -18C2 -5 5 -2 18 0C5 2 2 5 0 18C-2 5 -5 2 -18 0C-5 -2 -2 -5 0 -18Z"/></g>
-        <g transform="translate(1065 262)"><path class="fx-star" style="--d:1.1s" d="M0 -13C1.5 -4 4 -1.5 13 0C4 1.5 1.5 4 0 13C-1.5 4 -4 1.5 -13 0C-4 -1.5 -1.5 -4 0 -13Z"/></g>
-        <g transform="translate(838 405)"> <path class="fx-star" style="--d:2.2s" d="M0 -15C2 -4 4 -2 15 0C4 2 2 4 0 15C-2 4 -4 2 -15 0C-4 -2 -2 -4 0 -15Z"/></g>
-        <g transform="translate(1985 190)"><path class="fx-star" style="--d:.6s"  d="M0 -16C2 -4 4 -2 16 0C4 2 2 4 0 16C-2 4 -4 2 -16 0C-4 -2 -2 -4 0 -16Z"/></g>
-        <g transform="translate(1992 470)"><path class="fx-star" style="--d:1.7s" d="M0 -12C1.5 -3 3 -1.5 12 0C3 1.5 1.5 3 0 12C-1.5 3 -3 1.5 -12 0C-3 -1.5 -1.5 -3 0 -12Z"/></g>
+    <!-- ===== DIE STATIONEN DER TOUR =====
+         data-focus = Bereich der Zeichnung, auf den die Kamera fährt (x, y, Breite, Höhe in %)
+         Reihenfolge hier = Reihenfolge beim Scrollen -->
+    <div class="steps">
 
-        <!-- Kaffee dampft -->
-        <path class="fx-steam"                 d="M898 772q-14 -18 0 -36q14 -18 0 -36"/>
-        <path class="fx-steam" style="--d:1.3s" d="M934 776q14 -18 0 -36q-14 -18 0 -36"/>
+      <section class="step step--start" id="start" data-focus="0,0,100,100">
+        <div class="step__intro">
+          <h1>Hi, ich bin Lina – UX/UI Designerin.</h1>
+          <p>Scroll dich durch meinen Schreibtisch.</p>
+          <span class="scroll-hint" aria-hidden="true">↓</span>
+        </div>
+      </section>
 
-        <!-- Blatt fällt von der Pflanze -->
-        <g class="fx-leaf"><path d="M0 0C10 -16 30 -16 38 -6C30 8 10 12 0 0Z"/></g>
+      <section class="step" id="cases" data-focus="49.4,25.5,16.8,28.5">
+        <div class="step__card step__card--wide">
+          <span class="step__kicker">Meine Arbeit</span>
+          <h2>UX Case Studies</h2>
+          <div class="cards">
+            <a class="card" href="case-studies/samespot.html">
+              <span class="card__tag">App · UX/UI</span>
+              <h3>sameSpot</h3>
+              <p>Kurzbeschreibung des Projekts.</p>
+            </a>
+            <a class="card" href="case-studies/kino-grimm.html">
+              <span class="card__tag">Website-Redesign</span>
+              <h3>Kino Grimm</h3>
+              <p>Kurzbeschreibung des Projekts.</p>
+            </a>
+            <a class="card" href="case-studies/accessible-city.html">
+              <span class="card__tag">Design Challenge</span>
+              <h3>Accessible City</h3>
+              <p>Kurzbeschreibung des Projekts.</p>
+            </a>
+          </div>
+        </div>
+      </section>
 
-        <!-- Blinkender Cursor im Code auf dem Laptop -->
-        <rect class="fx-caret" x="1048" y="512" width="14" height="28" rx="2"/>
+      <section class="step" id="prozess" data-focus="44.2,72.5,11.5,10.5">
+        <div class="step__card">
+          <span class="step__kicker">So arbeite ich</span>
+          <h2>Mein Design-Prozess</h2>
+          <ol class="process">
+            <li>Research</li><li>Skizzen</li><li>Wireframes</li><li>Prototyp</li><li>Testen</li>
+          </ol>
+          <p>Kurzer Text, wie du vorgehst.</p>
+          <ul class="chips">
+            <li>Figma</li><li>User Research</li><li>Prototyping</li><li>Illustrator</li><li>HTML & CSS</li>
+          </ul>
+        </div>
+      </section>
 
-        <!-- Mauszeiger auf dem großen Bildschirm -->
-        <g class="fx-mouse"><path d="M0 0L0 36L9 28L17 44L23 41L15 25L28 25Z"/></g>
-      </svg>
+      <section class="step" id="mediengestaltung" data-focus="35.6,38,13.8,34">
+        <div class="step__card">
+          <span class="step__kicker">Wo ich herkomme</span>
+          <h2>Meine Arbeiten als Mediengestalterin</h2>
+          <p>Hier kommen deine weiteren Arbeiten hin, z. B. als kleine Bildergalerie.</p>
+        </div>
+      </section>
 
-      <!--
-        KLICKBARE BEREICHE
-        --x / --y = linke obere Ecke in % vom Bild
-        --w / --h = Breite / Höhe in % vom Bild
-        data-open  = id des Fensters, das sich öffnet
-        data-label = Text beim Hovern
-        hotspot--key = wichtig für Recruiter → Beschriftung ist immer sichtbar
-      -->
+      <section class="step" id="studium" data-focus="22.6,69,4.4,9.5">
+        <div class="step__card">
+          <span class="step__kicker">Gerade dabei</span>
+          <h2>Ich studiere UX-Design</h2>
+          <p>Kurzer Text zu deinem Studium.</p>
+        </div>
+      </section>
 
-      <!-- Wichtig für Recruiter -->
-      <button class="hotspot hotspot--key" style="--x:49.4%; --y:25.5%; --w:16.8%; --h:28.5%" data-open="casestudies" data-anim="pop" data-label="UX Case Studies"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot hotspot--key" style="--x:64%;   --y:55%;   --w:9.2%;  --h:11%"   data-open="lebenslauf" data-anim="heben"  data-label="Lebenslauf"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot hotspot--key" style="--x:90.5%; --y:66%;   --w:6.3%;  --h:19%"   data-open="kontakt" data-anim="schwingen"     data-label="Kontakt"><span class="hotspot__obj" aria-hidden="true"></span></button>
+      <section class="step" id="zertifikate" data-focus="20.5,14,5.3,12">
+        <div class="step__card">
+          <span class="step__kicker">Schwarz auf weiß</span>
+          <h2>Zertifikate & Zeugnisse</h2>
+          <p>Hier verlinkst du deine Zertifikate und Zeugnisse.</p>
+          <p class="links"><a href="zertifikate.pdf" target="_blank">Zertifikate öffnen</a></p>
+        </div>
+      </section>
 
-      <!-- Arbeit & Lernen -->
-      <button class="hotspot" style="--x:44.2%; --y:72.5%; --w:11.5%; --h:10.5%" data-open="prozess" data-anim="wackeln"          data-label="Mein Design-Prozess"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:35.6%; --y:38%;   --w:13.8%; --h:34%"   data-open="mediengestaltung" data-anim="pop" data-label="Meine Arbeiten als Mediengestalterin"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:52.8%; --y:55%;   --w:9.5%;  --h:17%"   data-open="digital" data-anim="pop"          data-label="Ich zeichne auch digital"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:22.6%; --y:69%;   --w:4.4%;  --h:9.5%"  data-open="studium" data-anim="wackeln"          data-label="Ich studiere UX-Design"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:20.5%; --y:14%;   --w:5.3%;  --h:12%  " data-open="zertifikate" data-anim="wackeln"      data-label="Zertifikate & Zeugnisse"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:77.3%; --y:8%;    --w:17%;   --h:27%"   data-open="weg" data-anim="pop"              data-label="Mein Weg ins UX"><span class="hotspot__obj" aria-hidden="true"></span></button>
+      <section class="step" id="kreativ" data-focus="6,45,10.2,28">
+        <div class="step__card">
+          <span class="step__kicker">Kreativ, auch nach Feierabend</span>
+          <h2>Ich male und zeichne</h2>
+          <p>Mit Acryl auf Leinwand und digital auf dem iPad.</p>
+          <p>Hier können Bilder deiner Leinwände und Zeichnungen hin.</p>
+        </div>
+      </section>
 
-      <!-- Persönliches -->
-      <button class="hotspot" style="--x:32.3%; --y:73.5%; --w:6.6%;  --h:13%"   data-open="ueber-mich" data-anim="kippeln" data-label="Über mich"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:68.2%; --y:17%;   --w:7.7%;  --h:27%"   data-open="fotos" data-anim="wackeln"      data-label="Das bin ich"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:6%;    --y:45%;   --w:10.2%; --h:28%"   data-open="acryl" data-anim="kippeln"      data-label="Ich male mit Acryl auf Leinwand"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:24%;   --y:46.5%; --w:8%;    --h:21%"   data-open="playlist" data-anim="wippen"   data-label="Ich designe am liebsten mit Musik"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:16.4%; --y:44%;   --w:5.9%;  --h:29%"   data-open="social" data-anim="wackeln"     data-label="Ich zeige meine Projekte auf Social Media"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:10.2%; --y:11.5%; --w:4.7%;  --h:16%"   data-open="reisen" data-anim="drehen"     data-label="Ich reise gerne"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:15.8%; --y:13%;   --w:4.7%;  --h:14.5%" data-open="lesen" data-anim="heben"      data-label="Ich lese gerne"><span class="hotspot__obj" aria-hidden="true"></span></button>
-      <button class="hotspot" style="--x:27%;   --y:73%;   --w:5.2%;  --h:7.5%"  data-open="gym" data-anim="heben"        data-label="Ich gehe ins Gym"><span class="hotspot__obj" aria-hidden="true"></span></button>
+      <section class="step" id="freizeit" data-focus="9.5,10,24,72">
+        <div class="step__card">
+          <span class="step__kicker">Abseits vom Bildschirm</span>
+          <h2>Was mich sonst ausmacht</h2>
+          <ul class="facts">
+            <li><strong>Musik:</strong> Ich designe am liebsten mit meinen Lieblingssongs.</li>
+            <li><strong>Reisen:</strong> Wo ich schon überall war.</li>
+            <li><strong>Lesen:</strong> Was gerade auf meinem Kindle ist.</li>
+            <li><strong>Gym:</strong> Mein Ausgleich zum Schreibtisch.</li>
+          </ul>
+          <!-- Spotify: Playlist öffnen → ··· → Teilen → Playlist einbetten → ID hier einsetzen -->
+          <iframe class="embed" src="https://open.spotify.com/embed/playlist/DEINE_PLAYLIST_ID" height="152" loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" title="Spotify-Playlist"></iframe>
+          <p class="links">
+            <a href="https://instagram.com/DEIN_NAME" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://tiktok.com/@DEIN_NAME" target="_blank" rel="noopener">TikTok</a>
+          </p>
+        </div>
+      </section>
+
+      <section class="step" id="ueber-mich" data-focus="32.3,73.5,6.6,13">
+        <div class="step__card">
+          <span class="step__kicker">Hol dir einen Kaffee</span>
+          <h2>Über mich</h2>
+          <p>Hier kommt ein kurzer Text über dich, gern mit einem Foto.</p>
+        </div>
+      </section>
+
+      <section class="step" id="weg" data-focus="77.3,8,17,27">
+        <div class="step__card">
+          <span class="step__kicker">Keep going</span>
+          <h2>Mein Weg ins UX</h2>
+          <p>Kurzer Text zu deinem Quereinstieg aus der Mediengestaltung.</p>
+        </div>
+      </section>
+
+      <section class="step" id="lebenslauf" data-focus="64,55,9.2,11">
+        <div class="step__card">
+          <span class="step__kicker">Alles auf einen Blick</span>
+          <h2>Lebenslauf</h2>
+          <p>Mein Lebenslauf als PDF zum Ansehen und Herunterladen.</p>
+          <p class="links"><a href="lebenslauf.pdf" target="_blank">Lebenslauf öffnen</a></p>
+        </div>
+      </section>
+
+      <section class="step" id="kontakt" data-focus="90.5,66,6.3,19">
+        <div class="step__card">
+          <span class="step__kicker">Tasche ist gepackt</span>
+          <h2>Ich bin startklar</h2>
+          <ul class="facts">
+            <li><strong>Arbeitsort:</strong> Raum Hamburg oder remote</li>
+            <li><strong>Verfügbar:</strong> ab sofort</li>
+          </ul>
+          <p class="links">
+            <a href="mailto:lina-melissa@web.de">lina-melissa@web.de</a>
+            <a href="https://linkedin.com/in/linamelissa" target="_blank" rel="noopener">LinkedIn</a>
+          </p>
+        </div>
+      </section>
+
     </div>
-  </header>
+  </main>
 
-
-  <!-- ============ FENSTER (öffnen sich direkt am Gegenstand) ============ -->
-
-  <!-- Wichtig für Recruiter -->
-  <dialog id="casestudies" class="panel panel--wide">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>UX Case Studies</h2>
-    <div class="cards">
-      <a class="card" href="case-studies/samespot.html">
-        <span class="card__tag">App · UX/UI</span>
-        <h3>sameSpot</h3>
-        <p>Kurzbeschreibung des Projekts.</p>
-      </a>
-      <a class="card" href="case-studies/kino-grimm.html">
-        <span class="card__tag">Website-Redesign</span>
-        <h3>Kino Grimm</h3>
-        <p>Kurzbeschreibung des Projekts.</p>
-      </a>
-      <a class="card" href="case-studies/accessible-city.html">
-        <span class="card__tag">Design Challenge</span>
-        <h3>Accessible City</h3>
-        <p>Kurzbeschreibung des Projekts.</p>
-      </a>
-    </div>
-  </dialog>
-
-  <dialog id="lebenslauf" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Lebenslauf</h2>
-    <p>Mein Lebenslauf als PDF zum Ansehen und Herunterladen.</p>
-    <p class="links"><a href="lebenslauf.pdf" target="_blank">Lebenslauf öffnen</a></p>
-  </dialog>
-
-  <dialog id="kontakt" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Ich bin startklar</h2>
-    <ul class="facts">
-      <li><strong>Arbeitsort:</strong> Raum Hamburg oder remote</li>
-      <li><strong>Verfügbar:</strong> ab sofort</li>
-    </ul>
-    <p class="links">
-      <a href="mailto:lina-melissa@web.de">lina-melissa@web.de</a>
-      <a href="https://linkedin.com/in/linamelissa" target="_blank" rel="noopener">LinkedIn</a>
-    </p>
-  </dialog>
-
-  <!-- Arbeit & Lernen -->
-  <dialog id="prozess" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Mein Design-Prozess</h2>
-    <ol class="steps">
-      <li>Research</li><li>Skizzen</li><li>Wireframes</li><li>Prototyp</li><li>Testen</li>
-    </ol>
-    <p>Kurzer Text, wie du vorgehst.</p>
-    <ul class="chips">
-      <li>Figma</li><li>User Research</li><li>Prototyping</li><li>Illustrator</li><li>HTML & CSS</li>
-    </ul>
-  </dialog>
-
-  <dialog id="mediengestaltung" class="panel panel--wide">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Arbeiten aus der Mediengestaltung</h2>
-    <p>Hier kommen deine weiteren Arbeiten hin, z. B. als Bildergalerie.</p>
-  </dialog>
-
-  <dialog id="digital" class="panel panel--wide">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Ich zeichne auch digital</h2>
-    <p>Hier kommen deine digitalen Zeichnungen hin.</p>
-  </dialog>
-
-  <dialog id="studium" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Ich studiere UX-Design</h2>
-    <p>Kurzer Text zu deinem Studium.</p>
-  </dialog>
-
-  <dialog id="zertifikate" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Zertifikate & Zeugnisse</h2>
-    <p>Hier verlinkst du deine Zertifikate und Zeugnisse.</p>
-    <p class="links"><a href="zertifikate.pdf" target="_blank">Zertifikate öffnen</a></p>
-  </dialog>
-
-  <dialog id="weg" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Mein Weg ins UX</h2>
-    <p>Kurzer Text zu deinem Quereinstieg aus der Mediengestaltung.</p>
-  </dialog>
-
-  <!-- Persönliches -->
-  <dialog id="ueber-mich" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Über mich</h2>
-    <p>Hol dir einen Kaffee, hier kommt ein kurzer Text über dich.</p>
-  </dialog>
-
-  <dialog id="fotos" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Das bin ich</h2>
-    <p>Hier kommen Fotos von dir hin.</p>
-  </dialog>
-
-  <dialog id="acryl" class="panel panel--wide">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Acryl auf Leinwand</h2>
-    <p>Hier kommen deine Leinwände hin.</p>
-  </dialog>
-
-  <dialog id="playlist" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Meine Lieblingssongs</h2>
-    <p>Das läuft bei mir, während ich designe.</p>
-    <!-- Spotify: Playlist öffnen → ··· → Teilen → Playlist einbetten → ID hier einsetzen -->
-    <iframe
-      class="panel__embed"
-      src="https://open.spotify.com/embed/playlist/DEINE_PLAYLIST_ID"
-      height="352" loading="lazy"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      title="Spotify-Playlist"></iframe>
-  </dialog>
-
-  <dialog id="social" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Social Media</h2>
-    <p>Hier zeige ich, wie meine Projekte entstehen.</p>
-    <p class="links">
-      <a href="https://instagram.com/DEIN_NAME" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://tiktok.com/@DEIN_NAME" target="_blank" rel="noopener">TikTok</a>
-    </p>
-  </dialog>
-
-  <dialog id="reisen" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Meine Reisen</h2>
-    <p>Wo du schon warst.</p>
-  </dialog>
-
-  <dialog id="lesen" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Was ich lese</h2>
-    <p>Deine aktuellen Bücher.</p>
-  </dialog>
-
-  <dialog id="gym" class="panel">
-    <button class="panel__close" aria-label="Schließen">×</button>
-    <h2>Gym</h2>
-    <p>Kurzer Text zu deinem Ausgleich.</p>
-  </dialog>
+  <footer class="footer">© 2026 Lina Melissa Arndt</footer>
 
   <script src="script.js"></script>
 </body>
